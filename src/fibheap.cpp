@@ -10,9 +10,9 @@ using namespace std;
 
 // Node creation
 struct node {
-    int n;
-    pair<int, float> data;
-    int degree;
+    int n; //index
+    float distance; //distance
+    int degree; // degree
     node *parent;
     node *child;
     node *left;
@@ -27,27 +27,25 @@ class FibonacciHeap {
    private:
     int nH;
 
-    
-
    public:
         node *H;
         node *init();
-        int createLink(node *, node *, node *);
+        int createLink(node *, node *);
 
-        node *createNode(int);
-        node *insert(node *, node *);
-        node *unite(node *, node *);
-        node *extract_min(node *);
+        node *createNode(int, float);
+        node *insert(node *);
+        node *unite(node *);
+        node *extract_min();
 
-        int decrease_key(node *, int, int);
-        int delete_key(node *, int);
+        int decrease_key(int, float);
+        int delete_key(int);
 
-        int Consolidate(node *);
-        int displayHeap(node *);
+        int Consolidate();
+        int displayHeap();
 
-        node *Find(node *, int);
-        int Cut(node *, node *, node *);
-        int Cascase_cut(node *, node *);
+        node *Find(node*, int);
+        int Cut(node *, node *);
+        int Cascase_cut( node *);
     //constructor
         FibonacciHeap() { 
             H = init(); 
@@ -63,21 +61,23 @@ node *FibonacciHeap::init() {
 }
 
 // Create node
-node *FibonacciHeap::createNode(int value) {
+node *FibonacciHeap::createNode(int id, float distance) {
     node *x = new node;
-    x->n = value;
-    return x;
-}
+    x->n = id;
+    x->distance = distance;
 
-// Insert node
-node *FibonacciHeap::insert(node *H, node *x) {
-        x->degree = 0;
+     x->degree = 0;
         x->parent = nullptr;
         x->child = nullptr;
         x->left = x;
         x->right = x;
         x->mark = 'F';
         x->C = 'N';
+    return x;
+}
+
+// Insert node
+node *FibonacciHeap::insert(node *x) {
 
         if (H != nullptr) {
             (H->left)->right = x;
@@ -85,7 +85,7 @@ node *FibonacciHeap::insert(node *H, node *x) {
             x->left = H->left;
             H->left = x;
             
-            if (x->n < H->n) // is new element min?
+            if (x->distance < H->distance) // is new element min?
                 H = x;
         } else { // empty heap - new element is root
             H = x;
@@ -95,11 +95,11 @@ node *FibonacciHeap::insert(node *H, node *x) {
 }
 
 // Create linking
-int FibonacciHeap::createLink(node *H1, node *y, node *z) {
+int FibonacciHeap::createLink(node *y, node *z) {
         (y->left)->right = y->right;
         (y->right)->left = y->left;
         if (z->right == z)
-            H1 = z;
+            H = z;
         y->left = y;
         y->right = y;
         y->parent = z;
@@ -112,27 +112,27 @@ int FibonacciHeap::createLink(node *H1, node *y, node *z) {
         ((z->child)->left)->right = y;
         (z->child)->left = y;
 
-        if (y->n < (z->child)->n)
+        if (y->distance < (z->child)->distance)
             z->child = y;
         z->degree++;
         return 0;
 }
 
 // Union Operation
-node *FibonacciHeap::unite(node *H1, node *H2) {
+node *FibonacciHeap::unite(node *H2) {
     node *np;
-    node *H = init();
-    H = H1;
-    (H->left)->right = H2;
-    (H2->left)->right = H;
-    np = H->left;
-    H->left = H2->left;
+    node *HNew = init();
+    HNew = H;
+    (HNew->left)->right = H2;
+    (H2->left)->right = HNew;
+    np = HNew->left;
+    HNew->left = H2->left;
     H2->left = np;
-    return H;
+    return HNew;
 }
 
 // Display the heap
-int FibonacciHeap::displayHeap(node *H) {
+int FibonacciHeap::displayHeap() {
     node *p = H;
     if (p == nullptr) {
         cout << "Empty Heap" << endl;
@@ -141,7 +141,7 @@ int FibonacciHeap::displayHeap(node *H) {
     cout << "Root Nodes: " << endl;
 
     do {
-        cout << p->n;
+        cout << p->distance;
         p = p->right;
         if (p != H) {
         cout << "-->";
@@ -152,10 +152,10 @@ int FibonacciHeap::displayHeap(node *H) {
 }
 
 // Extract min
-node *FibonacciHeap::extract_min(node *H1) {
+node *FibonacciHeap::extract_min() {
         node *p;
         node *ptr;
-        node *z = H1;
+        node *z = H;
 
         p = z;
         ptr = z;
@@ -171,19 +171,17 @@ node *FibonacciHeap::extract_min(node *H1) {
         if (z->child != nullptr) 
             x = z->child;
 
-            
-
         if (x != nullptr) {
             node *first = x;
             do {
                 np = x->right;
-                (H1->left)->right = x;
-                x->right = H1;
-                x->left = H1->left;
-                H1->left = x;
+                (H->left)->right = x;
+                x->right = H;
+                x->left = H->left;
+                H->left = x;
 
-                if (x->n < H1->n)
-                    H1 = x;
+                if (x->distance < H->distance)
+                    H = x;
 
                 x->parent = nullptr;
                 x = np;
@@ -206,129 +204,183 @@ node *FibonacciHeap::extract_min(node *H1) {
 
         (z->left)->right = z->right;
         (z->right)->left = z->left;
-        H1 = z->right;
+        H = z->right;
 
         if (z == z->right && z->child == nullptr)
             H = nullptr;
 
         else {
-            H1 = z->right;
-            Consolidate(H1);
+            H = z->right;
+            Consolidate();
         }
         nH = nH - 1;
         return p;
 }
 
 // Consolidation Function
-int FibonacciHeap::Consolidate(node *H1) {
-    int d, i;
-    float f = (log(nH)) / (log(2));
-    int D = f;
-    node *A[D+1];
-    //node *A[D];
+int FibonacciHeap::Consolidate() {
+    if (nH <= 1) return 0;
+    
+    int D = (int)(log((float)nH) / log(2.0f)) + 2;
+    vector<node*> A(D + 2, nullptr);
 
-    for (i = 0; i <= D; i++)
-        A[i] = nullptr;
-
-    node *x = H1;
-    node *y;
-    node *np;
-    node *pt = x;
-
+    // Snapshot the root list FIRST before any linking
+    vector<node*> roots;
+    node *x = H;
     do {
-        pt = pt->right;
-
-        d = x->degree;
-
-        while (A[d] != nullptr) {
-            y = A[d];
-
-            if (x->n > y->n) {
-                    np = x;
-                    x = y;
-                    y = np;
-            }
-
-            if (y == H1)
-                H1 = x;
-            
-            createLink(H1, y, x);
-            
-            if (x->right == x)
-                H1 = x;
-            
-            A[d] = nullptr;
-            d = d + 1;
-        }
-
-        A[d] = x;
+        roots.push_back(x);
         x = x->right;
-    } while (x != H1);
+    } while (x != H);
 
+    // Now iterate over the snapshot
+    for (node* x : roots) {
+        int d = x->degree;
+        while (A[d] != nullptr) {
+            node *y = A[d];
+            if (x->distance > y->distance) {
+                swap(x, y);
+            }
+            if (y == H) H = x;
+            createLink(y, x);
+            if (x->right == x) H = x;
+            A[d] = nullptr;
+            d++;
+        }
+        A[d] = x;
+    }
+
+    // Rebuild root list
     H = nullptr;
-
-    for (int j = 0; j <= D; j++) {
+    for (int j = 0; j < D + 2; j++) {
         if (A[j] != nullptr) {
             A[j]->left = A[j];
             A[j]->right = A[j];
-            
             if (H != nullptr) {
                 (H->left)->right = A[j];
                 A[j]->right = H;
                 A[j]->left = H->left;
                 H->left = A[j];
-                if (A[j]->n < H->n)
-                H = A[j];
+                if (A[j]->distance < H->distance)
+                    H = A[j];
             } else {
                 H = A[j];
             }
-
-            if (H == nullptr)
-                H = A[j];
-            else if (A[j]->n < H->n)
-                H = A[j];
         }
     }
     return 0;
 }
+// int FibonacciHeap::Consolidate() {
+//     cout << "Consolidate called, nH = " << nH << endl;
+//     int d, i;
+//     float f = (log(nH)) / (log(2));
+//     int D = f;
+
+    
+// node *A[D+1];
+//     //node *A[D];
+
+//     for (i = 0; i <= D; i++)
+//         A[i] = nullptr;
+
+//     node *x = H;
+//     node *y;
+//     node *np;
+//     node *pt = x;
+
+//     do {
+//         pt = pt->right;
+
+//         d = x->degree;
+
+//         while (A[d] != nullptr) {
+//             y = A[d];
+
+//             if (x->distance > y->distance) {
+//                     np = x;
+//                     x = y;
+//                     y = np;
+//             }
+
+//             if (y == H)
+//                 H = x;
+            
+//             createLink(y, x);
+            
+//             if (x->right == x)
+//                 H = x;
+            
+//             A[d] = nullptr;
+//             d = d + 1;
+//         }
+
+//         A[d] = x;
+//         x = x->right;
+//     } while (x != H);
+
+//     H = nullptr;
+
+//     for (int j = 0; j <= D; j++) {
+//         if (A[j] != nullptr) {
+//             A[j]->left = A[j];
+//             A[j]->right = A[j];
+            
+//             if (H != nullptr) {
+//                 (H->left)->right = A[j];
+//                 A[j]->right = H;
+//                 A[j]->left = H->left;
+//                 H->left = A[j];
+//                 if (A[j]->distance < H->distance)
+//                 H = A[j];
+//             } else {
+//                 H = A[j];
+//             }
+
+//             if (H == nullptr)
+//                 H = A[j];
+//             else if (A[j]->distance< H->distance)
+//                 H = A[j];
+//         }
+//     }
+//     return 0;
+// }
 
 // Decrease Key Operation
-int FibonacciHeap::decrease_key(node *H1, int x, int k) {
+int FibonacciHeap::decrease_key(int nodeID, float distance) {
     node *y;
 
-    if (H1 == nullptr) {
+    if (H == nullptr) {
         cout << "The Heap is Empty" << endl;
         return 0;
     }
 
-    node *ptr = Find(H1, x);
+    node *ptr = Find(H, nodeID);
 
     if (ptr == nullptr) {
-        cout << "Node not found in the Heap" << endl;
+        cout << "Node " << nodeID<<" not found in the Heap" << endl;
         return 1;
     }
 
-    if (ptr->n < k) {
+    if (ptr->distance < distance) {
         cout << "Entered key greater than current key" << endl;
         return 0;
     }
 
-    ptr->n = k;
+    ptr->distance = distance;
     y = ptr->parent;
     
-    if (y != nullptr && ptr->n < y->n) {
-        Cut(H1, ptr, y);
-        Cascase_cut(H1, y);
+    if (y != nullptr && ptr->distance < y->distance) {
+        Cut(ptr, y);
+        Cascase_cut(y);
     }
 
-    if (ptr->n < H->n)
+    if (ptr->distance < H->distance)
         H = ptr;
 
     return 0;
 }
 
 // Cutting Function
-int FibonacciHeap::Cut(node *H1, node *x, node *y) {
+int FibonacciHeap::Cut(node *x, node *y) {
     if (x == x->right)
             y->child = nullptr;
 
@@ -342,37 +394,37 @@ int FibonacciHeap::Cut(node *H1, node *x, node *y) {
     x->right = x;
     x->left = x;
 
-    (H1->left)->right = x;
-    x->right = H1;
+    (H->left)->right = x;
+    x->right = H;
 
-    x->left = H1->left;
-    H1->left = x;
+    x->left = H->left;
+    H->left = x;
     x->parent = nullptr;
     x->mark = 'F';
     return 0;
 }
 
 // Cascade cut
-int FibonacciHeap::Cascase_cut(node *H1, node *y) {
+int FibonacciHeap::Cascase_cut( node *y) {
     node *z = y->parent;
     if (z != nullptr) {
         if (y->mark == 'F') {
             y->mark = 'T';
         } else {
-            Cut(H1, y, z);
-            Cascase_cut(H1, z);
+            Cut(y, z);
+            Cascase_cut(z);
         }
     }
     return 0;
 }
 
 // Search function
-node *FibonacciHeap::Find(node *H, int k) {
+node *FibonacciHeap::Find(node* H, int nodeID) {
     node *x = H;
     x->C = 'Y';
     node *p = nullptr;
 
-    if (x->n == k) {
+    if (x->n == nodeID) {
         p = x;
         x->C = 'N';
         return p;
@@ -380,9 +432,9 @@ node *FibonacciHeap::Find(node *H, int k) {
 
     if (p == nullptr) {
         if (x->child != nullptr)
-        p = Find(x->child, k);
-        if ((x->right)->C != 'Y')
-        p = Find(x->right, k);
+        p = Find(x->child, nodeID);
+        if (p == nullptr &&(x->right)->C != 'Y')
+        p = Find(x->right, nodeID);
     }
 
     x->C = 'N';
@@ -390,13 +442,13 @@ node *FibonacciHeap::Find(node *H, int k) {
 }
 
 // Deleting key
-int FibonacciHeap::delete_key(node *H1, int k) {
+int FibonacciHeap::delete_key(int k) {
     node *np = nullptr;
     int t;
-    t = decrease_key(H1, k, -5000);
+    t = decrease_key(k, -5000);
     
     if (!t)
-        np = extract_min(H);
+        np = extract_min();
 
     if (np != nullptr)
         cout << "Key Deleted" << endl;
