@@ -45,10 +45,18 @@ void BinaryHeap::swapNodes(int i,int j){
 
 }
  
+//siftUp  t.c = O(1)+O(1)+O(log n)= O(log n)
 void BinaryHeap::siftUp(int i){
     while((i>1) && (heap[parent(i)]->n >heap[i]->n)){
-        swapNodes(i,parent(i));
-        i= parent(i);
+    //(i>1) =node is not root
+    //(heap[parent(i)]->n >heap[i]->n)= parent value is greater tgen curr node value
+    //heap property is violated
+    //O(log n)
+        swapNodes(i,parent(i));         //O(1)
+        //swap curr node with its parent 
+        
+        i= parent(i);                   //O(1)
+        //move the index upward to continue checking if heap property is violated or not
     }
 
 }
@@ -57,7 +65,7 @@ void BinaryHeap::siftDown(int i){
     int n = size();
     int smallest = i;
     int l = left(i);
-    int r = right(i);
+    int r = right(i); 
  
     if((l<= n) && (heap[l]->n< heap[smallest]->n)){
         smallest = l;
@@ -85,82 +93,124 @@ BHNode* BinaryHeap::createNode(int vertexId){
 
 //insertion ..t.c =O(logn)
 BHNode* BinaryHeap::insert(BHNode* unused,BHNode* x){
-    int i= (int)heap.size();
-    heap.push_back(x);
-    x->index = i;
-    pos[x->degree] = i;
+    int i= (int)heap.size();       //O(1)
+    //gets curr size of the heap ..this is the idx where the new node will be inserted
+    
+    heap.push_back(x);             //O(1)
+    //adds a new node at the end of he array(heap)
+
+    x->index = i;                   //O(1)
+    //stores the idx of the node in the heap to track its position
+
+    pos[x->degree] = i;             //O(1)
+    //stores the position ofhte vertex in the pos[] array
  
-    siftUp(i);
-    H = heap[1];
+    siftUp(i);                      //O(log n)
+    //fixes the heap property by moving node upward if needed
+
+    H = heap[1];                    //O(1)
+    //updates the pointer to point at the root of the heap...root is at index 1 in binary heap
     
     return H;
 }
  
 //finding minimum....O(1) as it is the top element
 BHNode* BinaryHeap::find_min() const{
-    if (isEmpty()){
-        return NULL;
+    if(isEmpty()){                  //O(1)
+    //if heap has no elements, there is nothing to return so return null
+        return NULL;                //O(1)
     }
 
     return heap[1];
 }
  
+
 //extracting minimum....t.c= O(log n)
+//removes and returns the minimum element from heap
 BHNode* BinaryHeap::extract_min(BHNode* unused){
-    BHNode* minNode;
-    int last;
+    BHNode* minNode;                //O(1) 
+    //pointer to store min node=root
+
+    int last;                       //O(1)
+    //stores the idx of the last element in heap
  
-    if(isEmpty()){
-        return NULL;
+    if(isEmpty()){                  //O(1)
+        return NULL;    //if heap is empty, return null
     }
  
-    minNode = heap[1];
-    last = size();
+    minNode = heap[1];              //O(1)
+    //stores the root node
+
+    last = size();                  //O(1)
+    //last index in heap
  
-    pos[minNode->degree]= -1;
- 
-    if(last == 1){
-        heap.pop_back();
-        H = NULL;
+    pos[minNode->degree]= -1;       //O(1)
+    //removes the mapping of root vertex from the pos array...which means that the root is no longer in the heap
+    
+    if(last == 1){                  //O(1)
+    //if there is only one element in heap
+        heap.pop_back();            //O(1)
+        //remove only one element from the heap
         
-        return minNode;
+        H = NULL;                   //O(1)
+        //heap is empty now 
+        
+        return minNode;         //return the reoved node
     }
  
-    heap[1] = heap[last];
-    heap[1]->index = 1;
-    pos[heap[1]->degree]= 1;
-    heap.pop_back();
-    siftDown(1);
-    H = heap[1];
+    heap[1] = heap[last];           //O(1)
+    //move the last eleemnt to root pos
+
+    heap[1]->index = 1;             //O(1)
+    //update the index of the node to 1....root is always at 1 in binary heap
+
+    pos[heap[1]->degree]= 1;       //O(1)
+    //update the pos of the node in the pos array
+
+    heap.pop_back();                //O(1)
+    //remove the last element...we have it at root now so we cam remov it from the end
+    
+    siftDown(1);                    //O(log n)
+    //restores the heap property by pushing the node downwards..as we put the largest node as the root..heap property is violated
+    
+    H = heap[1];                    //O(1)
+    //upadting the root pointer to point at the correct root after restoring heap property
     
     return minNode;
 
 }
  
-//decrease_key
+//reduces the key value of a vertex in the heap
 //t,c =O(log n)
 int BinaryHeap::decrease_key(BHNode* unused, int vertexId, float newKey){
-    int i;
+    int i;              //O(1)
+    //index of vertex in the heap
  
-    if((vertexId< 0) || (vertexId >= capacity)){
-        return 1;
+    if((vertexId< 0) || (vertexId >= capacity)){    //O(1)
+    //checks if teh vertex id is valid
+        return 1;       //invalid input returns 1
     }
  
-    i = pos[vertexId];
+    i = pos[vertexId];                  //O(1)
+    //getting the pos of vertex in the heap from the pos array
     
-    if(i== -1){
+    if(i== -1){                         //O(1)
         return 1;       //vertex is nawtt in the heap
     }
  
-    if(newKey> heap[i]->n){             //new key is larger than the current key
-        cout<<"Ignored!!! New key is larger than current key!!!"<<endl;
-        
+    if(newKey> heap[i]->n){             //O(1)
+    //new key is larger than the current key..heap property voilated  
         return 0;               //new key is ignored
     }
  
-    heap[i]->n = newKey;
-    siftUp(i);
-    H = heap[1];
+    heap[i]->n = newKey;            //O(1)
+    //updates the key value of the node
+
+    siftUp(i);                      //O(log n)
+    //restores heap property
+
+    H = heap[1];                    //O(1)
+    //updating the root pointer
     
     return 0;
 
