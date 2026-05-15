@@ -115,6 +115,7 @@ vector<vector<pair<int,float>>> loadData(int dataset, int v) {
 }
 
 
+// THIS IS WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 void djikistraFib(int dataset, int v) {
     cout<<"\nLoading data . . .";
     vector<vector<pair<int,float>>> adj(v+1);
@@ -131,10 +132,9 @@ void djikistraFib(int dataset, int v) {
     // }
 
     FibonacciHeap fibH;
-     //HollowHeap hollowH;
 
     const float INF = 1000000000.0;
-    vector<float> dist(v+1, INF);
+    vector<float> dist(v+1, INF); // INITIALLY ALL VERTICES ARE INFINITELY FAR AWAY
     // Distance from source to itself is 0
     dist[0] = 0;
     
@@ -144,18 +144,16 @@ void djikistraFib(int dataset, int v) {
     }
 
     //Process the queue until all reachable vertices are finalized
-    while (fibH.H != nullptr) {
-        node* top = fibH.extract_min();
-        if(top == nullptr)
+    while (fibH.H != nullptr) { //WHILE HEAP IS NOT EMPTY
+        node* top = fibH.extract_min(); //EXTRACT MINIMUM DISTANCE ELEMENT
+        if(top == nullptr) //IF THERE ARE NO ELEMENTS BREAK
             break;
 
-        int srcIndex = top->n;
-        float weight = top->distance;
+        int srcIndex = top->n; //IDENTIFICATION OF THE MIN ELEMENT
+        float weight = top->distance; //HOW FAR AWAY IS THE MIN ELEMENT??
 
-        // if(dist[srcIndex] == INF) 
-        //     break;
-
-        // If this distance not the latest shortest one, skip it
+        // DOES THE DISTANCE ARRAY ALREADY CONTAIN A SMALLER DISTANCE THAN THE MIN ELEMENT??
+        //IF SO SKIP
         if (weight > dist[srcIndex])
             continue;
 
@@ -163,8 +161,8 @@ void djikistraFib(int dataset, int v) {
         for (auto &p : adj[srcIndex]) { // this statement ITERATES THROUGH ALL THE NEIGHBORS OF adj[src]
             // it basically means
             //for(int i upto num(neighbors of src)) p = adj[src][i]
-            int v = p.first; 
-            float w = p.second; 
+            int v = p.first;  //ID OF THE CURRENT VERTEX
+            float w = p.second;  //DISTANCE OF THE CURRENT VERTEX
 
             // If we found a shorter path to v through u, update it
             if (dist[srcIndex] + w < dist[v]) {
@@ -183,6 +181,7 @@ void djikistraFib(int dataset, int v) {
     }
 }
 
+//THIS IS NAWTTTTTTT WORKINGGGGGGGGGGG RNNNNNNNNNNN
 void djikistraGeneric(int dataset,int v, int heaptype){
     //heaptype
     //1 : binary
@@ -310,6 +309,7 @@ void djikistraGeneric(int dataset,int v, int heaptype){
 
 }
 
+///YAYYYYYYYYYYYYYY THIS IS WORKING
 void djikBinary(int dataset,int v){
     int u,nb;
     float w, newDist;
