@@ -352,6 +352,7 @@ int FibonacciHeap::Cut(node *x, node *y) {
 
 // Cascade cut
 int FibonacciHeap::Cascase_cut( node *y) {
+    cascadingCuts++;
     node *z = y->parent;
     if (z != nullptr) {
         if (y->mark == 'F') {
@@ -402,6 +403,39 @@ int FibonacciHeap::delete_key(int k) {
         cout << "Key not Deleted" << endl;
     return 0;
 }
+
+int FibonacciHeap::countTrees() {
+    if (H == nullptr) return 0;
+    int count = 1;
+    node *p = H->right;
+    while (p != H) { count++; p = p->right; }
+    return count;
+}
+
+int FibonacciHeap::treeHeight(node *n) {
+    if (n == nullptr) return 0;
+    int maxChildHeight = 0;
+    if (n->child != nullptr) {
+        node *c = n->child;
+        do {
+            maxChildHeight = max(maxChildHeight, treeHeight(c));
+            c = c->right;
+        } while (c != n->child);
+    }
+    return 1 + maxChildHeight;
+}
+
+int FibonacciHeap::heapHeight() {
+    if (H == nullptr) return 0;
+    int maxH = 0;
+    node *p = H;
+    do {
+        maxH = max(maxH, treeHeight(p));
+        p = p->right;
+    } while (p != H);
+    return maxH;
+}
+
 /*
 int main() {
     int n, m, l;

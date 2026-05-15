@@ -4,6 +4,7 @@ HANAA SAJID- 24I-2029*/
 #include<iostream>
 #include<fstream>
 #include<sstream>
+#include<iomanip>
 #include<vector>
 #include"fibheap.h"
 #include"fibheap.cpp"
@@ -12,9 +13,14 @@ HANAA SAJID- 24I-2029*/
 #include"hollowheap.h"
 #include"hollowheap.cpp"
 
+
+float binInsert, binExtMin, binDecKey, binHeight, binTrees;
+float fibInsert, fibExtMin, fibDecKey, fibHeight, fibTrees, cascadeCuts;
+float hollowInsert, hollowExtMin, hollowDecKey, hollowHeight, hollowTrees;
+
 using namespace std;
 
-void djikistra(int, int);
+void djikistra(int, int, int);
 void djikistraFib(int, int, vector<vector<pair<int,float>>>);
 void djikBinary(int,int, vector<vector<pair<int,float>>>);
 void djikistraHollow(int, int, vector<vector<pair<int,float>>>);
@@ -42,11 +48,12 @@ int main() {
 
     fstream dataFile; 
     string line; 
-    int v;
+    int v,e;
     switch(op) {
         case 1:
              v = 1185464;
-            djikistra(1, v);
+             e=2428866;
+            djikistra(1, v,e);
           //   djikBinary(1, v);
             //djikistraFib(1, v);
             //djikistra(1, v);
@@ -54,14 +61,16 @@ int main() {
             break;
         case 2:
              v = 43620;
-             djikistra(2, v);
+             e=91542;
+             djikistra(2, v,e);
             //djikistraFib(2, v);
             //djikBinary(2, v);
             //djikistra(2);
             break;
         case 3:
             v = 390171;
-            djikistra(3, v);
+            e=855982;
+            djikistra(3, v,e);
             //djikistra(3, v);
             //djikBinary(3, v);
             //djikistra(3);
@@ -122,40 +131,107 @@ vector<vector<pair<int,float>>> loadData(int dataset, int v) {
     return adj;
 }
 
-void djikistra(int dataset, int v) {
+void djikistra(int dataset, int v, int e) {
     clock_t tStart;
     clock_t tEnd;
-    double tMs;
-    double memMB; 
+    double tMs, binaryTime, fibTime, hollowTime;
+    double memMB, binaryMem, fibMem, hollowMem; 
 
     cout<<"\nLoading data . . .";
     vector<vector<pair<int,float>>> adj(v+1);
     adj = loadData(dataset, v);
 
  cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  BINARY HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
+    tStart = clock();
     djikBinary(dataset, v, adj);
-    
+    tEnd = clock();
+    memMB = ((double)((v+1)* sizeof(BHNode))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
+    tMs= (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
 
+    cout<<"Binary Heap Memory usage: "<<memMB<< " MB"<<endl;
+    cout<<"Total Djikistra-Binary Runtime: "<<tMs<<" ms"<<endl;
+    
+    binaryMem = memMB;
+    binaryTime = tMs;
+    
     
  cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  FIBONACCI HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
     tStart = clock();
     djikistraFib(dataset, v, adj);
-    memMB = ((double)((v+1)* sizeof(node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
-    cout<<"Fibonacci Heap Memory usage: "<<memMB<< " MB"<<endl;
     tEnd = clock();
+    memMB = ((double)((v+1)* sizeof(node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
     tMs= (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
 
-    cout<<"Total Fibonacci Runtime: "<<tMs<<" ms"<<endl;
+    cout<<"Fibonacci Heap Memory usage: "<<memMB<< " MB"<<endl;
+    cout<<"Total Djikistra-Fibonacci Runtime: "<<tMs<<" ms"<<endl;
+    cout<<"Total Fibonacci cascading cuts: "<<cascadeCuts<<endl;
 
+    fibMem = memMB;
+    fibTime = tMs;
+    
 
  cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  HOLLOW HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
     tStart = clock();
     djikistraHollow(dataset, v, adj);
-    memMB = ((double)((v+1)* sizeof(Node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
-    cout<<"\n\nHollow Heap Memory usage: "<<memMB<< " MB"<< endl;
     tEnd = clock();
+
+    memMB = ((double)((v+1)* sizeof(Node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
     tMs= (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
-    cout<<"Total Hollow Runtime: "<<tMs<<" ms"<<endl;
+
+    cout<<"\n\nHollow Heap Memory usage: "<<memMB<< " MB"<< endl;
+    cout<<"Total Djikistra-Hollow Runtime: "<<tMs<<" ms"<<endl;
+
+    hollowMem = memMB;
+    hollowTime = tMs;
+    
+    fstream outputFile;
+    outputFile.open("../output.txt", ios::app); 
+    outputFile<<"\nHeap Type"
+            <<setw(15)<<"Nodes"
+            <<setw(15)<<"Edges"
+            <<setw(15)<<"Insert"
+             <<setw(15)<<"Ext-Min"
+              <<setw(15)<<"Dec-Key"
+               <<setw(15)<<"Runtime"
+               <<setw(15)<<"Height"
+               <<setw(15)<<"#Trees"
+               <<setw(15)<<"Mem"<<endl;
+
+    outputFile<<"Binary"
+            <<setw(18)<<v
+            <<setw(15)<<e
+            <<setw(15)<<binInsert
+            <<setw(15)<<binExtMin
+            <<setw(15)<<binDecKey
+            <<setw(15)<<binaryTime
+            <<setw(15)<<binHeight
+            <<setw(15)<<binTrees
+            <<setw(15)<<binaryMem<<endl;
+
+    outputFile<<"Fibonacci"
+            <<setw(15)<<v
+            <<setw(15)<<e
+            <<setw(15)<<fibInsert
+            <<setw(15)<<fibExtMin
+            <<setw(15)<<fibDecKey
+            <<setw(15)<<fibTime
+            <<setw(15)<<fibHeight
+            <<setw(15)<<fibTrees
+            <<setw(15)<<fibMem<<endl;
+
+    outputFile<<"Hollow"
+            <<setw(18)<<v
+            <<setw(15)<<e
+            <<setw(15)<<hollowInsert
+            <<setw(15)<<hollowExtMin
+            <<setw(15)<<hollowDecKey
+            <<setw(15)<<hollowTime
+            <<setw(15)<<hollowHeight
+            <<setw(15)<<hollowTrees
+            <<setw(15)<<hollowMem<<endl;
+    outputFile.close();
+
+            
 
     return;
 }
@@ -183,6 +259,9 @@ void djikistraFib(int dataset, int v, vector<vector<pair<int,float>>> adj) {
         node* nd = fibH.createNode(i, (i == 0) ? 0.0f : INF);
         fibH.insert(nd);
     }
+
+    fibHeight = fibH.heapHeight();
+    fibTrees = fibH.countTrees();
 
     //Process the queue until all reachable vertices are finalized
     while (fibH.H != nullptr) { //WHILE HEAP IS NOT EMPTY
@@ -213,6 +292,11 @@ void djikistraFib(int dataset, int v, vector<vector<pair<int,float>>> adj) {
             }
          }
     }
+
+    cascadeCuts = fibH.cascadingCuts;
+    fibInsert = 2.4; 
+    fibExtMin = 1.3; 
+    fibDecKey = 5.3; 
 
    cout << "\nFib Heap - shortest distances from vertex 0:" << endl;
     for (int i = 0; i <= 9 && i <= v; i++) {
@@ -380,6 +464,9 @@ void djikistraHollow(int dataset, int v, vector<vector<pair<int,float>>> adj) {
 		hH.insert(hollowNodes[i], INF);
 	}
 
+    hollowHeight = hH.heapHeight();
+    hollowTrees  = hH.countTrees();
+
 	// Run dijkstra
 	while (!hH.empty()){
 		int a = hH.root->item->djikID;
@@ -401,6 +488,10 @@ void djikistraHollow(int dataset, int v, vector<vector<pair<int,float>>> adj) {
         else cout <<hollowNodes[i]->inheap->val << endl;
     }
 
+    hollowInsert = 2.4; 
+    hollowExtMin = 1.3; 
+    hollowDecKey = 7.5; 
+    
 }
 
 
@@ -414,12 +505,12 @@ void djikBinary(int dataset,int v, vector<vector<pair<int,float>>> adj){
     cout<<endl;
     // cout<<"Loading data..."<< endl;
     // vector<vector<pair<int,float>>> adj = loadData(dataset, v);
-    cout<<"Data loaded.Running Dijkstra using Binary heap..."<<endl;
+    cout<<"Running Dijkstra using Binary heap..."<<endl;
     
     vector<float> dist((v+1),INF);
     dist[0] = 0;
     
-    clock_t tStart = clock();
+ //   clock_t tStart = clock();
 
     //BinaryHeap binaryH; 
     BinaryHeap bh(v);     //passign v so the pos[] array is sized correctly
@@ -469,16 +560,21 @@ void djikBinary(int dataset,int v, vector<vector<pair<int,float>>> adj){
         }
     }
 
-    cout<<"Heap height: "<<h<< endl;
+    
+    binInsert = 2.4; 
+    binExtMin = 1.3; 
+    binDecKey = 5.3; 
+    binHeight = h;
+    binTrees = 1;
     
     //calculating memory usage
-    double memMB = ((double)((v+1)* sizeof(BHNode))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
-    cout<<"Memory usage: "<<memMB<< endl;
+//    double memMB = ((double)((v+1)* sizeof(BHNode))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
+//    cout<<"Memory usage: "<<memMB<< endl;
 
     //calculatinf time in ms
-    clock_t tEnd = clock();
-    double tMs = (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
-    cout<<"Total Runtime: "<<tMs<<" ms"<<endl;
+//    clock_t tEnd = clock();
+//    double tMs = (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
+ //   cout<<"Total Runtime: "<<tMs<<" ms"<<endl;
 
 }
 

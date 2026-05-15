@@ -13,6 +13,7 @@ HANAA SAJID- 24I-2029*/
 
 using namespace std;
 
+
 // Node creation
 struct node {
     int n; //index
@@ -33,7 +34,9 @@ class FibonacciHeap {
     int nH;
 
    public:
+        int cascadingCuts;
         node *H;
+
         node *init();
         int createLink(node *, node *);
 
@@ -51,9 +54,14 @@ class FibonacciHeap {
         node *Find(node*, int);
         int Cut(node *, node *);
         int Cascase_cut( node *);
+
+        int countTrees();
+        int treeHeight(node*);
+        int heapHeight();
     //constructor
         FibonacciHeap() { 
             H = init(); 
+            cascadingCuts = 0;
             nH=0;
         }
 };

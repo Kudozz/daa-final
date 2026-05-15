@@ -216,6 +216,36 @@ public:
 			item->inheap = NULL;
 		}
 	}
+
+	int countTrees() {
+		if (!root) return 0;
+		int count = 1;
+		Node* s = root->sibling;
+		while (s) { count++; s = s->sibling; }
+		return count;
+	}
+
+	int nodeHeight(Node* n) {
+		if (!n) return 0;
+		int maxChild = 0;
+		Node* c = n->child;
+		while (c) {
+			maxChild = max(maxChild, nodeHeight(c));
+			c = c->sibling;
+		}
+		return 1 + maxChild;
+	}
+
+	int heapHeight() {
+		if (!root) return 0;
+		int maxH = 0;
+		Node* s = root;
+		while (s) {
+			maxH = max(maxH, nodeHeight(s));
+			s = s->sibling;
+		}
+		return maxH;
+	}
 };
 
 

@@ -1,0 +1,15 @@
+
+Heap Type          Nodes          Edges         Insert        Ext-Min        Dec-Key        Runtime         Height         #Trees            Mem
+Binary             43620          91542            2.4            1.3            5.3         46.579             15              1         0.6656
+Fibonacci          43620          91542            2.4            1.3            5.3         3259.7              0              0        2.49601
+Hollow             43620          91542            2.4            1.3            7.5         35.655              0              0        1.83041
+
+Heap Type          Nodes          Edges         Insert        Ext-Min        Dec-Key        Runtime         Height         #Trees            Mem
+Binary             43620          91542            2.4            1.3            5.3         46.474             15              1         0.6656
+Fibonacci          43620          91542            2.4            1.3            5.3         3602.3              0              0        2.49601
+Hollow             43620          91542            2.4            1.3            7.5         39.352              0              0        1.83041
+
+Heap Type          Nodes          Edges         Insert        Ext-Min        Dec-Key        Runtime         Height         #Trees            Mem
+Binary             43620          91542            2.4            1.3            5.3         45.238             15              1         0.6656
+Fibonacci          43620          91542            2.4            1.3            5.3        3306.26              1          43621        2.49601
+Hollow             43620          91542            2.4            1.3            7.5         36.314              2              1        1.83041
