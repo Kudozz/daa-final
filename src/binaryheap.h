@@ -6,6 +6,7 @@ HANAA SAJID- 24I-2029*/
 
 #include<iostream>
 #include<vector>
+#include<chrono>
 
 using namespace std;
 
@@ -40,6 +41,10 @@ private:
     void siftDown(int i);
  
 public:
+    long long totalInsertTime = 0, insertCount = 0;
+    long long totalExtMinTime = 0, extMinCount = 0;
+    long long totalDecKeyTime = 0, decKeyCount = 0;
+
     BHNode* H;      // points to heap[1] (the minimum)..it is NULL when empty
     BinaryHeap(int numVertices);
     ~BinaryHeap();
@@ -57,5 +62,7 @@ public:
     int size() const{ 
         return ((int)heap.size()-1); 
     }
+
+
 
 };

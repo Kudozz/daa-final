@@ -24,7 +24,7 @@ node *FibonacciHeap::createNode(int id, float distance) {
 
 // Insert node
 node *FibonacciHeap::insert(node *x) {
-
+         auto t1 = chrono::high_resolution_clock::now();
         if (H != nullptr) {
             (H->left)->right = x;
             x->right = H;
@@ -37,6 +37,11 @@ node *FibonacciHeap::insert(node *x) {
             H = x;
         }
     nH = nH + 1;
+
+    auto t2 = chrono::high_resolution_clock::now();
+    totalInsertTime += chrono::duration_cast<chrono::nanoseconds>(t2 - t1).count();
+    insertCount++;
+
     return H;
 }
 
@@ -99,6 +104,8 @@ int FibonacciHeap::displayHeap() {
 
 // Extract min
 node *FibonacciHeap::extract_min() {
+     auto t1 = chrono::high_resolution_clock::now();
+
         node *p;
         node *ptr;
         node *z = H;
@@ -160,6 +167,11 @@ node *FibonacciHeap::extract_min() {
             Consolidate();
         }
         nH = nH - 1;
+
+        auto t2 = chrono::high_resolution_clock::now();
+    totalExtMinTime += chrono::duration_cast<chrono::nanoseconds>(t2 - t1).count();
+    extMinCount++;
+
         return p;
 }
 
@@ -292,6 +304,7 @@ int FibonacciHeap::Consolidate() {
 
 // Decrease Key Operation
 int FibonacciHeap::decrease_key(int nodeID, float distance) {
+     auto t1 = chrono::high_resolution_clock::now();
     node *y;
 
     if (H == nullptr) {
@@ -322,6 +335,9 @@ int FibonacciHeap::decrease_key(int nodeID, float distance) {
     if (ptr->distance < H->distance)
         H = ptr;
 
+      auto t2 = chrono::high_resolution_clock::now();
+    totalDecKeyTime += chrono::duration_cast<chrono::nanoseconds>(t2 - t1).count();
+    decKeyCount++;
     return 0;
 }
 

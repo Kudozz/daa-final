@@ -5,6 +5,7 @@
 HANAA SAJID- 24I-2029*/
 #include <cmath>
 #include <cstdlib>
+#include<chrono>
 #include <iostream>
 #include<vector>
 /*WAJIHA ABBASI- 24I-2059
@@ -36,6 +37,10 @@ class FibonacciHeap {
    public:
         int cascadingCuts;
         node *H;
+
+        long long totalExtMinTime = 0, extMinCount = 0;
+        long long totalDecKeyTime = 0, decKeyCount = 0;
+        long long totalInsertTime = 0, insertCount = 0;
 
         node *init();
         int createLink(node *, node *);

@@ -93,6 +93,7 @@ BHNode* BinaryHeap::createNode(int vertexId){
 
 //insertion ..t.c =O(logn)
 BHNode* BinaryHeap::insert(BHNode* unused,BHNode* x){
+     auto t1 = chrono::high_resolution_clock::now();    
     int i= (int)heap.size();       //O(1)
     //gets curr size of the heap ..this is the idx where the new node will be inserted
     
@@ -110,7 +111,9 @@ BHNode* BinaryHeap::insert(BHNode* unused,BHNode* x){
 
     H = heap[1];                    //O(1)
     //updates the pointer to point at the root of the heap...root is at index 1 in binary heap
-    
+     auto t2 = chrono::high_resolution_clock::now();
+    totalInsertTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+    insertCount++;
     return H;
 }
  
@@ -128,6 +131,7 @@ BHNode* BinaryHeap::find_min() const{
 //extracting minimum....t.c= O(log n)
 //removes and returns the minimum element from heap
 BHNode* BinaryHeap::extract_min(BHNode* unused){
+     auto t1 = chrono::high_resolution_clock::now();
     BHNode* minNode;                //O(1) 
     //pointer to store min node=root
 
@@ -175,7 +179,9 @@ BHNode* BinaryHeap::extract_min(BHNode* unused){
     
     H = heap[1];                    //O(1)
     //upadting the root pointer to point at the correct root after restoring heap property
-    
+    auto t2 = chrono::high_resolution_clock::now();
+    totalExtMinTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+    extMinCount++;
     return minNode;
 
 }
@@ -183,6 +189,7 @@ BHNode* BinaryHeap::extract_min(BHNode* unused){
 //reduces the key value of a vertex in the heap
 //t,c =O(log n)
 int BinaryHeap::decrease_key(BHNode* unused, int vertexId, float newKey){
+     auto t1 = chrono::high_resolution_clock::now();
     int i;              //O(1)
     //index of vertex in the heap
  
@@ -212,6 +219,10 @@ int BinaryHeap::decrease_key(BHNode* unused, int vertexId, float newKey){
     H = heap[1];                    //O(1)
     //updating the root pointer
     
+    
+auto t2 = chrono::high_resolution_clock::now();
+    totalDecKeyTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+    decKeyCount++;
     return 0;
 
 }

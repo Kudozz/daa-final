@@ -294,9 +294,9 @@ void djikistraFib(int dataset, int v, vector<vector<pair<int,float>>> adj) {
     }
 
     cascadeCuts = fibH.cascadingCuts;
-    fibInsert = 2.4; 
-    fibExtMin = 1.3; 
-    fibDecKey = 5.3; 
+    fibInsert = fibH.insertCount  ? (double)fibH.totalInsertTime  / fibH.insertCount  : 0;
+    fibExtMin = fibH.extMinCount  ? (double)fibH.totalExtMinTime  / fibH.extMinCount  : 0;
+    fibDecKey = fibH.decKeyCount  ? (double)fibH.totalDecKeyTime  / fibH.decKeyCount  : 0;
 
    cout << "\nFib Heap - shortest distances from vertex 0:" << endl;
     for (int i = 0; i <= 9 && i <= v; i++) {
@@ -488,9 +488,9 @@ void djikistraHollow(int dataset, int v, vector<vector<pair<int,float>>> adj) {
         else cout <<hollowNodes[i]->inheap->val << endl;
     }
 
-    hollowInsert = 2.4; 
-    hollowExtMin = 1.3; 
-    hollowDecKey = 7.5; 
+    hollowInsert = hH.insertCount  ? (double)hH.totalInsertTime / hH.insertCount  : 0;
+    hollowExtMin = hH.extMinCount  ? (double)hH.totalExtMinTime / hH.extMinCount  : 0;
+    hollowDecKey = hH.decKeyCount  ? (double)hH.totalDecKeyTime / hH.decKeyCount  : 0;
     
 }
 
@@ -561,9 +561,9 @@ void djikBinary(int dataset,int v, vector<vector<pair<int,float>>> adj){
     }
 
     
-    binInsert = 2.4; 
-    binExtMin = 1.3; 
-    binDecKey = 5.3; 
+    binInsert = bh.insertCount ? (double)bh.totalInsertTime / bh.insertCount : 0;
+binExtMin = bh.extMinCount ? (double)bh.totalExtMinTime / bh.extMinCount : 0;
+binDecKey = bh.decKeyCount ? (double)bh.totalDecKeyTime / bh.decKeyCount : 0;
     binHeight = h;
     binTrees = 1;
     

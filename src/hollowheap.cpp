@@ -35,6 +35,11 @@ class HollowHeap {
 	int sz;
 public:
     Node* root;
+
+	long long totalInsertTime = 0, insertCount = 0;
+    long long totalExtMinTime = 0, extMinCount = 0;
+    long long totalDecKeyTime = 0, decKeyCount = 0;
+
 	HollowHeap() {// Initialise 
 		root = NULL;
 		sz = 0;
@@ -117,7 +122,11 @@ public:
 	}
 
 	void insert(Item* item, float val){
+		auto t1 = chrono::high_resolution_clock::now();
 		insert_node(newnode(item, val));
+		auto t2 = chrono::high_resolution_clock::now();
+		totalInsertTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+		insertCount++;
 	}
 
 	void insert(float val) {
@@ -125,6 +134,7 @@ public:
 	}
 
 	void decrease_key(Item* item, float val)	{
+		 auto t1 = chrono::high_resolution_clock::now();
 		Node* a = item->inheap;
 		if (a == root)	{
 			// Update value, then done
@@ -139,6 +149,9 @@ public:
 		b->child = a;
 		a->secondparent = b;
 		insertIntoHeap(b); // Make b a child of the root, or the parent of the root
+		 auto t2 = chrono::high_resolution_clock::now();
+    totalDecKeyTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+    decKeyCount++;
 	}
 	void delete_min() {// Remove the smallest item from the heap	
 		sz--;
@@ -201,9 +214,16 @@ public:
 	}
 
     float extract_min() {
-        float d = top();
-        delete_min();
-        return d;
+		auto t1 = chrono::high_resolution_clock::now();
+    float d = top();
+    delete_min();
+    auto t2 = chrono::high_resolution_clock::now();
+    totalExtMinTime += chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+    extMinCount++;
+    return d;
+        // float d = top();
+        // delete_min();
+        // return d;
     }
 
 	void erase(Item* item) // Remove item from the heap
