@@ -9,13 +9,16 @@ HANAA SAJID- 24I-2029*/
 #include"fibheap.cpp"
 #include"binaryheap.h"
 #include"binaryheap.cpp"
-
+#include"hollowheap.h"
+#include"hollowheap.cpp"
 
 using namespace std;
 
 void djikistra(int, int);
-void djikistraFib(int, int);
-void djikBinary(int,int);
+void djikistraFib(int, int, vector<vector<pair<int,float>>>);
+void djikBinary(int,int, vector<vector<pair<int,float>>>);
+void djikistraHollow(int, int, vector<vector<pair<int,float>>>);
+
 vector<vector<pair<int,float>>> loadData(int, int);
 
 int main() {
@@ -43,21 +46,24 @@ int main() {
     switch(op) {
         case 1:
              v = 1185464;
+            djikistra(1, v);
           //   djikBinary(1, v);
-             djikistraFib(1, v);
+            //djikistraFib(1, v);
             //djikistra(1, v);
-            djikBinary(1, v);
+            //djikBinary(1, v);
             break;
         case 2:
              v = 43620;
-            djikistraFib(2, v);
-            djikBinary(2, v);
+             djikistra(2, v);
+            //djikistraFib(2, v);
+            //djikBinary(2, v);
             //djikistra(2);
             break;
         case 3:
             v = 390171;
+            djikistra(3, v);
             //djikistra(3, v);
-            djikBinary(3, v);
+            //djikBinary(3, v);
             //djikistra(3);
             break;
         case 0:
@@ -116,13 +122,46 @@ vector<vector<pair<int,float>>> loadData(int dataset, int v) {
     return adj;
 }
 
+void djikistra(int dataset, int v) {
+    clock_t tStart;
+    clock_t tEnd;
+    double tMs;
+    double memMB; 
 
-// THIS IS WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-void djikistraFib(int dataset, int v) {
     cout<<"\nLoading data . . .";
     vector<vector<pair<int,float>>> adj(v+1);
     adj = loadData(dataset, v);
 
+ cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  BINARY HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
+    djikBinary(dataset, v, adj);
+    
+
+    
+ cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  FIBONACCI HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
+    tStart = clock();
+    djikistraFib(dataset, v, adj);
+    memMB = ((double)((v+1)* sizeof(node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
+    cout<<"Fibonacci Heap Memory usage: "<<memMB<< " MB"<<endl;
+    tEnd = clock();
+    tMs= (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
+
+    cout<<"Total Fibonacci Runtime: "<<tMs<<" ms"<<endl;
+
+
+ cout<<"\n\n\t\t ᯓ݁˖ 𖥔.ᯓ  HOLLOW HEAP   ᯓ.𖥔 ݁ ˖ ᯓ݁";
+    tStart = clock();
+    djikistraHollow(dataset, v, adj);
+    memMB = ((double)((v+1)* sizeof(Node))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
+    cout<<"\n\nHollow Heap Memory usage: "<<memMB<< " MB"<< endl;
+    tEnd = clock();
+    tMs= (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
+    cout<<"Total Hollow Runtime: "<<tMs<<" ms"<<endl;
+
+    return;
+}
+
+// THIS IS WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+void djikistraFib(int dataset, int v, vector<vector<pair<int,float>>> adj) {
     cout<<"\nDjikistra using Fibonacci Heap running . . .";
     int src = 0;
     // for(int i = 0; i < 10; i++) {
@@ -190,138 +229,192 @@ void djikistraGeneric(int dataset,int v, int heaptype){
     // 2: fib
     //3: holloqw
 
-    int u,nb;
-    float w, newDist;
+//     int u,nb;
+//     float w, newDist;
 
-    const float INF= 1000000000.0;
+//     const float INF= 1000000000.0;
     
-    cout<<endl;
-    cout<<"Loading data..."<< endl;
-    vector<vector<pair<int,float>>> adj = loadData(dataset, v);
-    cout<<"Data loaded.Running Dijkstra..."<<endl;
+//     cout<<endl;
+//     // cout<<"Loading data..."<< endl;
+//     // vector<vector<pair<int,float>>> adj = loadData(dataset, v);
+//     //cout<<"Data loaded.Running Dijkstra using Binary Hes..."<<endl;
     
-    vector<float> dist((v+1),INF);
-    dist[0] = 0;
+//     vector<float> dist((v+1),INF);
+//     dist[0] = 0;
     
     
-    //BinaryHeap binaryH; 
-        BinaryHeap bh(v);     //passign v so the pos[] array is sized correctly
-        FibonacciHeap fibH; 
-        //hollowheap
+//     //BinaryHeap binaryH; 
+//         BinaryHeap bh(v);     //passign v so the pos[] array is sized correctly
+//         FibonacciHeap fibH; 
+//         //hollowheap
     
-   // for (int i = 0; i <= v; ++i){   //source gets 0 key and the rest get infinity
-        switch(heaptype) {
-            case 1: {
-                BHNode* nd = bh.createNode(0);   
-                nd->n =0;
-                bh.insert(bh.H,nd);
-                break; 
-            } 
-            case 2: {
-                node* srcNode = fibH.createNode(0, 0);
-                fibH.H = fibH.insert(srcNode);
-            } 
-            case 3: {
-                //hollowheap
-            }
-        }
+//    // for (int i = 0; i <= v; ++i){   //source gets 0 key and the rest get infinity
+//         switch(heaptype) {
+//             case 1: {
+//                 BHNode* nd = bh.createNode(0);   
+//                 nd->n =0;
+//                 bh.insert(bh.H,nd);
+//                 break; 
+//             } 
+//             case 2: {
+//                 node* srcNode = fibH.createNode(0, 0);
+//                 fibH.H = fibH.insert(srcNode);
+//             } 
+//             case 3: {
+//                 //hollowheap
+//             }
+//         }
         
-   // }
+//    // }
     
-   int h;
-    switch(heaptype) {
-        case 1:
-            h=bh.height();
-            break;
-        case 2:
-            //h = fibH.getHeight();
-        case 3:
-            //hollow heap height
-            break;
-    }      //initial height
+//    int h;
+//     switch(heaptype) {
+//         case 1:
+//             h=bh.height();
+//             break;
+//         case 2:
+//             //h = fibH.getHeight();
+//         case 3:
+//             //hollow heap height
+//             break;
+//     }      //initial height
 
 
-    while(!bh.isEmpty()){
+//     while(!bh.isEmpty()){
         
-        switch(heaptype) {
-            case 1: {
-                BHNode* top = bh.extract_min(bh.H);
-                if(top== nullptr){
-                    break;
-                }
-                u= top->degree;         //vertex no. 
-                delete top;
-                break;
-            } 
-            case 2: {
-                node* top = fibH.extract_min();
-                if(top== nullptr){
-                    break;
-                }
-                u= top->degree;         //vertex no. 
-                delete top;
-                break;
-            }
-            case 3: {
-                //hollow heap
-            }
-        }   
+//         switch(heaptype) {
+//             case 1: {
+//                 BHNode* top = bh.extract_min(bh.H);
+//                 if(top== nullptr){
+//                     break;
+//                 }
+//                 u= top->degree;         //vertex no. 
+//                 delete top;
+//                 break;
+//             } 
+//             case 2: {
+//                 node* top = fibH.extract_min();
+//                 if(top== nullptr){
+//                     break;
+//                 }
+//                 u= top->degree;         //vertex no. 
+//                 delete top;
+//                 break;
+//             }
+//             case 3: {
+//                 //hollow heap
+//             }
+//         }   
  
-        if (dist[u] == INF){
-            break;          //all remaining vertices are unreachable
-        }
+//         if (dist[u] == INF){
+//             break;          //all remaining vertices are unreachable
+//         }
  
-        //relax all edges from u
-        for(int i = 0; i<(int)adj[u].size();i++){
-            nb = adj[u][i].first;
-            w = adj[u][i].second;
-            newDist = dist[u] +w;
+//         //relax all edges from u
+//         for(int i = 0; i<(int)adj[u].size();i++){
+//             nb = adj[u][i].first;
+//             w = adj[u][i].second;
+//             newDist = dist[u] +w;
  
-            if(newDist< dist[nb]){
-                dist[nb] = newDist;
-                switch(heaptype) {
-                    case 1:
-                        bh.decrease_key(bh.H, nb, newDist);
-                        break;
-                    case 2:
-                //        fibH.decrease_key(fibH.H, nb, newDist);
-                        break;
-                    case 3:
-                        //hollow heap
-                        break;
-                }
-            }
-        }
-    }
+//             if(newDist< dist[nb]){
+//                 dist[nb] = newDist;
+//                 switch(heaptype) {
+//                     case 1:
+//                         bh.decrease_key(bh.H, nb, newDist);
+//                         break;
+//                     case 2:
+//                 //        fibH.decrease_key(fibH.H, nb, newDist);
+//                         break;
+//                     case 3:
+//                         //hollow heap
+//                         break;
+//                 }
+//             }
+//         }
+//     }
 
-    switch(heaptype) {
-        case 1:{    
-            cout<<"\nBinary Heap - shortest distances from vertex 0:" << endl;
-            for(int i = 0; i<= 9 && i <= v; i++){
-                cout<<"  dist["<<i<<"] = ";
-                if(dist[i]== INF)
-                    cout<<"INF"<< endl;
-                else
-                    cout<<dist[i]<<endl;
-            }
-            break;
-        }
-    }
-    cout<<"Heap height: "<<h<< endl;
+//     switch(heaptype) {
+//         case 1:{    
+//             cout<<"\nBinary Heap - shortest distances from vertex 0:" << endl;
+//             for(int i = 0; i<= 9 && i <= v; i++){
+//                 cout<<"  dist["<<i<<"] = ";
+//                 if(dist[i]== INF)
+//                     cout<<"INF"<< endl;
+//                 else
+//                     cout<<dist[i]<<endl;
+//             }
+//             break;
+//         }
+//     }
+//     cout<<"Heap height: "<<h<< endl;
 
 }
 
+void djikistraHollow(int dataset, int v, vector<vector<pair<int,float>>> adj) {
+    HollowHeap hH;
+    vector<Item*> hollowNodes(v, nullptr);
+
+	// cout<<"\nLoading data . . .";
+    // vector<vector<pair<int,float>>> adj(v+1);
+    // adj = loadData(dataset, v);
+
+    cout<<"\nDjikistra using Hollow Heap running . . .";
+	
+	// Start the timer
+	// milliseconds start = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+	// Initialise the distance to each node
+
+    const float INF = 1000000000.0;
+   // vector<float> dist(v+1, INF); // INITIALLY ALL VERTICES ARE INFINITELY FAR AWAY
+    // Distance from source to itself is 0
+   // dist[0] = 0;
+    
+    hollowNodes[0] = hH.newitem();
+	hollowNodes[0]->djikID = 0;
+	hH.insert(hollowNodes[0], 0);
+	
+    for (int i = 1; i < v; i++){
+		hollowNodes[i] = hH.newitem();
+		hollowNodes[i]->djikID = i;
+		hH.insert(hollowNodes[i], INF);
+	}
+
+	// Run dijkstra
+	while (!hH.empty()){
+		int a = hH.root->item->djikID;
+		//float distance = hH.top();
+		//hH.delete_min();
+        float distance = hH.extract_min();
+		for (auto b : adj[a]){
+			if (distance + b.second < hollowNodes[b.first]->inheap->val) {
+                hollowNodes[b.first]->inheap->val = distance + b.second;
+				hH.decrease_key(hollowNodes[b.first], distance + b.second);
+			}
+		}
+	}
+
+    cout << "\nHollow Heap - shortest distances from vertex 0:" << endl;
+    for (int i = 0; i <= 9 && i <= v; i++) {
+        cout << "  dist[" << i << "] = ";
+        if (hollowNodes[i]->inheap->val == INF) cout << "INF" << endl;
+        else cout <<hollowNodes[i]->inheap->val << endl;
+    }
+
+}
+
+
 ///YAYYYYYYYYYYYYYY THIS IS WORKING
-void djikBinary(int dataset,int v){
+void djikBinary(int dataset,int v, vector<vector<pair<int,float>>> adj){
     int u,nb;
     float w, newDist;
 
     const float INF= 1000000000.0;
     
     cout<<endl;
-    cout<<"Loading data..."<< endl;
-    vector<vector<pair<int,float>>> adj = loadData(dataset, v);
-    cout<<"Data loaded.Running Dijkstra..."<<endl;
+    // cout<<"Loading data..."<< endl;
+    // vector<vector<pair<int,float>>> adj = loadData(dataset, v);
+    cout<<"Data loaded.Running Dijkstra using Binary heap..."<<endl;
     
     vector<float> dist((v+1),INF);
     dist[0] = 0;
