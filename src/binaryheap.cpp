@@ -96,7 +96,7 @@ BHNode* BinaryHeap::insert(BHNode* unused,BHNode* x){
     return H;
 }
  
-//finding minimum....O(1) as it the top element
+//finding minimum....O(1) as it is the top element
 BHNode* BinaryHeap::find_min() const{
     if (isEmpty()){
         return NULL;
@@ -137,7 +137,8 @@ BHNode* BinaryHeap::extract_min(BHNode* unused){
 
 }
  
-//  decrease_key///t,c =O(log n)
+//decrease_key
+//t,c =O(log n)
 int BinaryHeap::decrease_key(BHNode* unused, int vertexId, float newKey){
     int i;
  

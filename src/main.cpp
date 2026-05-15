@@ -46,6 +46,7 @@ int main() {
           //   djikBinary(1, v);
              djikistraFib(1, v);
             //djikistra(1, v);
+            djikBinary(1, v);
             break;
         case 2:
              v = 43620;
@@ -56,6 +57,7 @@ int main() {
         case 3:
             v = 390171;
             //djikistra(3, v);
+            djikBinary(3, v);
             //djikistra(3);
             break;
         case 0:
@@ -324,7 +326,8 @@ void djikBinary(int dataset,int v){
     vector<float> dist((v+1),INF);
     dist[0] = 0;
     
-    
+    clock_t tStart = clock();
+
     //BinaryHeap binaryH; 
     BinaryHeap bh(v);     //passign v so the pos[] array is sized correctly
     for (int i = 0; i <= v; ++i){   //source gets 0 key and the rest get infinity
@@ -363,11 +366,26 @@ void djikBinary(int dataset,int v){
     cout<<"\nBinary Heap - shortest distances from vertex 0:" << endl;
     for(int i = 0; i<= 9 && i <= v; i++){
         cout<<"  dist["<<i<<"] = ";
-        if(dist[i]== INF)
+        
+        if(dist[i]== INF){
             cout<<"INF"<< endl;
-        else
+        }
+
+        else{
             cout<<dist[i]<<endl;
+        }
     }
+
     cout<<"Heap height: "<<h<< endl;
+    
+    //calculating memory usage
+    double memMB = ((double)((v+1)* sizeof(BHNode))+(double)(v*sizeof(int)))/(1024.0 * 1024.0);
+    cout<<"Memory usage: "<<memMB<< endl;
+
+    //calculatinf time in ms
+    clock_t tEnd = clock();
+    double tMs = (double)(tEnd- tStart)/ CLOCKS_PER_SEC*1000.0;
+    cout<<"Total Runtime: "<<tMs<<" ms"<<endl;
 
 }
+
