@@ -11,7 +11,7 @@ using namespace std;
 
 
 struct BHNode{      //struct for binary heap nodes
-    int degree;     //vertex no.
+    int degree;     //vertex id
     int index;      //position in heap array
     float n;        //distance
 
